@@ -1,6 +1,7 @@
-import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import cors from 'cors';
+import express, { Request } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 app.use(express.json());
@@ -19,7 +20,7 @@ app.get('/posts/:id/comments', (req, res) => {
   res.send(commentsByPostId[req.params.id] ?? []);
 });
 
-app.post('/posts/:id/comments', (req, res) => {
+app.post('/posts/:id/comments', async (req, res) => {
   const commentId = uuidv4();
   const content = req.body.content as string;
 
@@ -31,7 +32,52 @@ app.post('/posts/:id/comments', (req, res) => {
   });
   commentsByPostId[postId] = comments;
 
+  try {
+    await axios.post('http://localhost:4005/events', {
+      type: 'CommentCreated',
+      data: {
+        commentId,
+        content,
+        postId,
+      },
+    });
+  } catch (error) {
+    console.error(
+      '\n\n\n********************** Start of ERROR in the Comments Service **********************'
+    );
+    console.error(error);
+    console.error(
+      '********************** End of ERROR in the Comments Service **********************\n\n\n'
+    );
+  }
+
   res.status(201).send(comments);
+});
+
+type CommentCreatedEvent = {
+  type: string;
+  data: {
+    commentId: string;
+    content: string;
+    postId: string;
+  };
+};
+
+type PostCreatedEvent = {
+  type: string;
+  data: {
+    postId: string;
+    title: string;
+  };
+};
+
+interface EventRequest extends Request {
+  body: CommentCreatedEvent | PostCreatedEvent;
+}
+
+app.post('/events', (req: EventRequest, res) => {
+  console.log('Event received:', req.body.type);
+  res.send({});
 });
 
 app.listen(4001, () => {

@@ -5,7 +5,7 @@ import CommentList from './CommentList';
 
 type Posts = {
   [key: string]: {
-    id: string;
+    postId: string;
     title: string;
   };
 };
@@ -26,12 +26,12 @@ const PostList = () => {
     <div
       className='card'
       style={{ width: '30%', marginBottom: '20px' }}
-      key={post.id}
+      key={post.postId}
     >
       <div className='card-body'>
         <h3>{post.title}</h3>
-        <CommentList postId={post.id} />
-        <CommentCreate postId={post.id} />
+        <CommentList postId={post.postId} />
+        <CommentCreate postId={post.postId} />
       </div>
     </div>
   ));
