@@ -50,7 +50,7 @@ app.post('/posts', async (req, res) => {
 });
 
 type CommentCreatedEvent = {
-  type: string;
+  type: 'CommentCreated';
   data: {
     commentId: string;
     content: string;
@@ -59,7 +59,7 @@ type CommentCreatedEvent = {
 };
 
 type PostCreatedEvent = {
-  type: string;
+  type: 'PostCreated';
   data: {
     postId: string;
     title: string;
