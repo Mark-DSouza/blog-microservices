@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
 
+import { OnSubmitEvent } from './types';
+
 const PostCreate = () => {
   const [title, setTitle] = useState('');
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: OnSubmitEvent) => {
     event.preventDefault();
     await axios.post('http://localhost:4000/posts', {
       title,
