@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-import { OnSubmitEvent } from './types';
+import { type OnSubmitEvent } from './types';
 
 const PostCreate = () => {
   const [title, setTitle] = useState('');

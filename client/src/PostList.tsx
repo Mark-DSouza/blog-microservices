@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import CommentCreate from './CommentCreate';
 import CommentList from './CommentList';
 
-import { Comment } from './types';
+import { type Comment } from './types';
 
 type Posts = {
   [key: string]: {

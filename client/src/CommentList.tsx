@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Comment } from './types';
+import { type Comment } from './types';
 
 const CommentList: React.FC<{ comments: Comment[] }> = ({ comments }) => {
   const renderedComments = comments.map((comment) => (

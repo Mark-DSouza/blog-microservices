@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
-import { OnSubmitEvent } from './types';
+import { type OnSubmitEvent } from './types';
 
 const CommentCreate: React.FC<{ postId: string }> = ({ postId }) => {
   const [content, setContent] = useState('');
