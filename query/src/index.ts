@@ -1,43 +1,28 @@
 import cors from 'cors';
-import express, { Request } from 'express';
+import express from 'express';
+import type { EventRequest } from './types';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+type Comment = {
+  commentId: string;
+  content: string;
+  status: 'pending' | 'approved' | 'rejected';
+};
+
+type Post = {
+  postId: string;
+  title: string;
+  comments: Comment[];
+};
+
 type Posts = {
-  [key: string]: {
-    postId: string;
-    title: string;
-    comments: {
-      commentId: string;
-      content: string;
-    }[];
-  };
+  [key: string]: Post;
 };
 
 const posts: Posts = {};
-
-type CommentCreatedEvent = {
-  type: 'CommentCreated';
-  data: {
-    commentId: string;
-    content: string;
-    postId: string;
-  };
-};
-
-type PostCreatedEvent = {
-  type: 'PostCreated';
-  data: {
-    postId: string;
-    title: string;
-  };
-};
-
-interface EventRequest extends Request {
-  body: CommentCreatedEvent | PostCreatedEvent;
-}
 
 app.post('/events', (req: EventRequest, res) => {
   const { type, data } = req.body;
@@ -52,8 +37,23 @@ app.post('/events', (req: EventRequest, res) => {
   }
 
   if (type === 'CommentCreated') {
-    const { commentId, content, postId } = data;
-    posts[postId].comments.push({ commentId, content });
+    const { commentId, content, postId, status } = data;
+    console.log('postId: ', postId);
+    console.log('Post[postId]: ', posts[postId]);
+    console.log('comments of that: ', posts[postId].comments);
+    posts[postId].comments.push({ commentId, content, status });
+  }
+
+  if (type === 'CommentUpdated') {
+    const { commentId, content, postId, status } = data;
+    const comment = posts[postId].comments.find(
+      (comment) => comment.commentId === commentId
+    );
+
+    if (comment) {
+      comment.content = content;
+      comment.status = status;
+    }
   }
 
   console.log(posts);

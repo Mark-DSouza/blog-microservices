@@ -1,7 +1,9 @@
 import cors from 'cors';
 import axios from 'axios';
-import express, { Request } from 'express';
+import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
+
+import type { EventRequest } from './types';
 
 const app = express();
 app.use(express.json());
@@ -48,27 +50,6 @@ app.post('/posts', async (req, res) => {
 
   res.status(201).send(posts[postId]);
 });
-
-type CommentCreatedEvent = {
-  type: 'CommentCreated';
-  data: {
-    commentId: string;
-    content: string;
-    postId: string;
-  };
-};
-
-type PostCreatedEvent = {
-  type: 'PostCreated';
-  data: {
-    postId: string;
-    title: string;
-  };
-};
-
-interface EventRequest extends Request {
-  body: CommentCreatedEvent | PostCreatedEvent;
-}
 
 app.post('/events', (req: EventRequest, res) => {
   console.log('Event received:', req.body.type);

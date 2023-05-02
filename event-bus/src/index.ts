@@ -15,12 +15,13 @@ app.post('/events', async (req, res) => {
       axios.post('http://localhost:4000/events', event),
       axios.post('http://localhost:4001/events', event),
       axios.post('http://localhost:4002/events', event),
+      axios.post('http://localhost:4003/events', event),
     ]);
 
     res.status(200).send({ status: 'OK' });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error });
+    res.status(500).send({ status: 'ERROR' });
   }
 });
 
