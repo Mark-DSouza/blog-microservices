@@ -2,13 +2,19 @@ import axios from 'axios';
 import cors from 'cors';
 import express from 'express';
 
+import type { Event } from './types';
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+const events: Event[] = [];
+
 app.post('/events', async (req, res) => {
   const event = req.body;
   console.log('Event received by the Event Bus', event);
+  events.push(event);
+  console.log('This is what the events array looks like: ', events);
 
   try {
     await Promise.all([
@@ -23,6 +29,10 @@ app.post('/events', async (req, res) => {
     console.error(error);
     res.status(500).send({ status: 'ERROR' });
   }
+});
+
+app.get('/events', (_, res) => {
+  res.send(events);
 });
 
 app.listen(4005, () => {

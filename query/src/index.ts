@@ -1,6 +1,10 @@
+import axios from 'axios';
 import cors from 'cors';
 import express from 'express';
-import type { EventRequest } from './types';
+
+import { handleEvents } from './handleEvents';
+
+import type { Event, EventRequest } from './types';
 
 const app = express();
 app.use(express.json());
@@ -18,44 +22,14 @@ type Post = {
   comments: Comment[];
 };
 
-type Posts = {
+export type Posts = {
   [key: string]: Post;
 };
 
 const posts: Posts = {};
 
 app.post('/events', (req: EventRequest, res) => {
-  const { type, data } = req.body;
-
-  if (type === 'PostCreated') {
-    const { postId, title } = data;
-    posts[postId] = {
-      postId,
-      title,
-      comments: [],
-    };
-  }
-
-  if (type === 'CommentCreated') {
-    const { commentId, content, postId, status } = data;
-    console.log('postId: ', postId);
-    console.log('Post[postId]: ', posts[postId]);
-    console.log('comments of that: ', posts[postId].comments);
-    posts[postId].comments.push({ commentId, content, status });
-  }
-
-  if (type === 'CommentUpdated') {
-    const { commentId, content, postId, status } = data;
-    const comment = posts[postId].comments.find(
-      (comment) => comment.commentId === commentId
-    );
-
-    if (comment) {
-      comment.content = content;
-      comment.status = status;
-    }
-  }
-
+  handleEvents(posts, req.body);
   console.log(posts);
   res.status(201).send({});
 });
@@ -64,6 +38,19 @@ app.get('/posts', (_, res) => {
   res.send(posts);
 });
 
-app.listen(4002, () => {
+app.listen(4002, async () => {
   console.log('Query Service is running on port 4002');
+
+  try {
+    const { data: events } = await axios.get<Event[]>(
+      'http://localhost:4005/events'
+    );
+
+    for (const event of events) {
+      console.log('Processing event: ', event.type);
+      handleEvents(posts, event);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 });

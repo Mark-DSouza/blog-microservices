@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request } from 'express';
 
 export type CommentCreatedEvent = {
   type: 'CommentCreated';
@@ -38,10 +38,12 @@ export type ModerationCompletedEvent = {
   };
 };
 
+export type Event =
+  | CommentCreatedEvent
+  | CommentUpdatedEvent
+  | ModerationCompletedEvent
+  | PostCreatedEvent;
+
 export interface EventRequest extends Request {
-  body:
-    | CommentCreatedEvent
-    | PostCreatedEvent
-    | ModerationCompletedEvent
-    | CommentUpdatedEvent;
+  body: Event;
 }
