@@ -46,5 +46,5 @@ func main() {
 	postsRouter := router.Group("/posts")
 	postsRouter.GET("/", getPosts)
 	postsRouter.POST("/", createPost)
-	router.Run()
+	router.Run(":4000")
 }
