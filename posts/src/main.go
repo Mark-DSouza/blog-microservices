@@ -42,6 +42,8 @@ func createPost(context *gin.Context) {
 }
 
 func main() {
+	posts = make([]post, 0)
+
 	router := gin.Default()
 	postsRouter := router.Group("/posts")
 	postsRouter.GET("/", getPosts)
