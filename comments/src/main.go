@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type comment struct {
-	ID      string `json:"id"`
-	Content string `json:"content"`
+	CommentId string `json:"commentId"`
+	Content   string `json:"content"`
 }
 
 var commentsByPostId map[string]([]comment)
@@ -43,8 +44,8 @@ func createCommentForPost(context *gin.Context) {
 	comments := commentsByPostId[postId]
 
 	commentsByPostId[postId] = append(comments, comment{
-		ID:      uuid.New().String(),
-		Content: input.Content,
+		CommentId: uuid.New().String(),
+		Content:   input.Content,
 	})
 
 	context.JSON(http.StatusCreated, commentsByPostId[postId])
@@ -54,8 +55,9 @@ func main() {
 	commentsByPostId = make(map[string]([]comment))
 
 	router := gin.Default()
+	router.Use(cors.Default())
 	commentsRouter := router.Group("/posts/:id/comments")
-	commentsRouter.GET("/", getCommentsByPost)
-	commentsRouter.POST("/", createCommentForPost)
+	commentsRouter.GET("", getCommentsByPost)
+	commentsRouter.POST("", createCommentForPost)
 	router.Run(":4001")
 }
