@@ -14,7 +14,7 @@ type post struct {
 	Title  string `json:"title"`
 }
 
-var posts map[string]post
+var posts []post
 
 func getPosts(context *gin.Context) {
 	// context.IndentedJSON(http.StatusOK, posts);
@@ -37,12 +37,12 @@ func createPost(context *gin.Context) {
 		PostId: postId,
 		Title:  input.Title,
 	}
-	posts[postId] = newPost
+	posts = append(posts, newPost)
 	context.JSON(http.StatusCreated, newPost)
 }
 
 func main() {
-	posts = make(map[string]post, 0)
+	posts = make([]post, 0)
 
 	router := gin.Default()
 	router.Use(cors.Default())
