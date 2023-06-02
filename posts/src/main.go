@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type post struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
+	PostId string `json:"postId"`
+	Title  string `json:"title"`
 }
 
-var posts []post
+var posts map[string]post
 
 func getPosts(context *gin.Context) {
 	// context.IndentedJSON(http.StatusOK, posts);
@@ -31,21 +32,24 @@ func createPost(context *gin.Context) {
 		return
 	}
 
-	postId := uuid.New()
+	postId := uuid.New().String()
 	newPost := post{
-		ID:    postId.String(),
-		Title: input.Title,
+		PostId: postId,
+		Title:  input.Title,
 	}
-	posts = append(posts, newPost)
+	posts[postId] = newPost
 	context.JSON(http.StatusCreated, newPost)
 }
 
 func main() {
-	posts = make([]post, 0)
+	posts = make(map[string]post, 0)
 
 	router := gin.Default()
+	router.Use(cors.Default())
+
 	postsRouter := router.Group("/posts")
-	postsRouter.GET("/", getPosts)
-	postsRouter.POST("/", createPost)
+	postsRouter.GET("", getPosts)
+	postsRouter.POST("", createPost)
+
 	router.Run(":4000")
 }
