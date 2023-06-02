@@ -1,21 +1,19 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
-// import CommentCreate from './CommentCreate';
-// import CommentList from './CommentList';
+import CommentCreate from './CommentCreate';
+import CommentList from './CommentList';
 
 // import { type Comment } from './types';
 
 type Posts = {
-  [key: string]: {
-    postId: string;
-    title: string;
-    // comments: Comment[];
-  };
-};
+  postId: string;
+  title: string;
+  // comments: Comment[];
+}[];
 
 const PostList = () => {
-  const [posts, setPosts] = useState<Posts>({});
+  const [posts, setPosts] = useState<Posts>([]);
 
   const fetchPosts = async () => {
     // const { data } = await axios.get('http://localhost:4002/posts');
@@ -28,7 +26,7 @@ const PostList = () => {
     fetchPosts();
   }, []);
 
-  const renderedPosts = Object.values(posts).map((post) => {
+  const renderedPosts = posts.map((post) => {
     const { postId, title /*comments*/ } = post;
     return (
       <div
@@ -39,7 +37,8 @@ const PostList = () => {
         <div className='card-body'>
           <h3>{title}</h3>
           {/* <CommentList comments={comments} /> */}
-          {/* <CommentCreate postId={postId} /> */}
+          <CommentList postId={postId} />
+          <CommentCreate postId={postId} />
         </div>
       </div>
     );
