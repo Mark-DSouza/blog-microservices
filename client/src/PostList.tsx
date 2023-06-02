@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
-import CommentCreate from './CommentCreate';
-import CommentList from './CommentList';
+// import CommentCreate from './CommentCreate';
+// import CommentList from './CommentList';
 
-import { type Comment } from './types';
+// import { type Comment } from './types';
 
 type Posts = {
   [key: string]: {
     postId: string;
     title: string;
-    comments: Comment[];
+    // comments: Comment[];
   };
 };
 
@@ -18,7 +18,8 @@ const PostList = () => {
   const [posts, setPosts] = useState<Posts>({});
 
   const fetchPosts = async () => {
-    const { data } = await axios.get('http://localhost:4002/posts');
+    // const { data } = await axios.get('http://localhost:4002/posts');
+    const { data } = await axios.get('http://localhost:4000/posts');
     console.log(data);
     setPosts(data);
   };
@@ -28,7 +29,7 @@ const PostList = () => {
   }, []);
 
   const renderedPosts = Object.values(posts).map((post) => {
-    const { postId, title, comments } = post;
+    const { postId, title /*comments*/ } = post;
     return (
       <div
         className='card'
@@ -37,8 +38,8 @@ const PostList = () => {
       >
         <div className='card-body'>
           <h3>{title}</h3>
-          <CommentList comments={comments} />
-          <CommentCreate postId={postId} />
+          {/* <CommentList comments={comments} /> */}
+          {/* <CommentCreate postId={postId} /> */}
         </div>
       </div>
     );
